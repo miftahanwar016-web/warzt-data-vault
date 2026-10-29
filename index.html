@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>warzt Data</title>
     
     <!-- Memuat Font dan Ikon -->
@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
-    <!-- Memuat Tailwind CSS (Sistem Desain Utama) -->
+    <!-- Memuat Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -26,53 +26,63 @@
         }
     </script>
     
-    <!-- CSS Tambahan & Pengaman (Fallback) -->
+    <!-- CSS Tambahan & Pengaman -->
     <style>
+        /* Perbaikan Tinggi Layar Mobile (100dvh) */
+        html, body { height: 100%; height: 100dvh; }
         body { -webkit-tap-highlight-color: transparent; background-color: #e2e8f0; margin: 0; font-family: 'Poppins', sans-serif; }
         
-        /* Pengaman jika Tailwind gagal dimuat oleh VSCode Mobile */
         .fallback-hidden { display: none !important; }
         
+        /* Area Aman (Safe Area) untuk iPhone / Android Gesture Bar */
+        .pb-safe { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+        
+        /* Efek Kaca Premium */
         .glass-card { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 10px 30px rgba(37, 99, 235, 0.08); }
         .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.05); }
+        
+        /* Ornamen Latar Belakang */
         .gradient-bg { background: linear-gradient(135deg, #2563EB 0%, #34D399 100%); }
         .blob-1 { position: absolute; top: -10%; left: -20%; width: 140%; height: 50%; background: linear-gradient(135deg, #2563EB 0%, #34D399 100%); border-radius: 0 0 50% 50%; z-index: 0; }
         .blob-2 { position: absolute; bottom: -20%; right: -20%; width: 80%; height: 40%; background: radial-gradient(circle, rgba(52,211,153,0.4) 0%, rgba(37,99,235,0) 70%); z-index: 0; }
-        .page-enter { animation: fadeUp 0.4s ease-out forwards; }
+        
+        /* Animasi Transisi Halus 60fps */
+        .page-enter { animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
         ::-webkit-scrollbar { width: 0px; background: transparent; }
         .donut-chart { border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
         .donut-inner { width: 75%; height: 75%; background-color: #ffffff; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .bulk-bar { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bulk-bar { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     </style>
 </head>
-<body class="text-slate-800 flex justify-center h-screen overflow-hidden">
+<body class="text-slate-800 flex justify-center h-[100dvh] overflow-hidden">
 
-    <!-- Spanduk Peringatan ini HANYA TAMPIL jika desain diblokir oleh VSCode -->
     <div class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; background-color: #ef4444; color: white; padding: 12px; text-align: center; z-index: 9999; font-size: 12px;">
-        <b>⚠️ Tampilan Diblokir VSCode!</b><br>Buka file HTML ini di Browser Chrome atau unggah ke web hosting agar desain muncul sempurna.
+        <b>⚠️ Tampilan Diblokir VSCode!</b><br>Buka file HTML ini di Browser Chrome atau unggah ke web hosting.
     </div>
 
-    <div id="app-container" class="w-full max-w-md h-full relative bg-slate-50 overflow-hidden shadow-2xl flex flex-col">
-        <div id="bg-blob-1" class="blob-1 transition-all duration-700"></div>
+    <!-- Kontainer Utama dengan Tinggi 100dvh Penuh -->
+    <div id="app-container" class="w-full max-w-md h-[100dvh] relative bg-slate-50 overflow-hidden shadow-2xl flex flex-col">
+        <div id="bg-blob-1" class="blob-1 transition-all duration-700 ease-in-out"></div>
         <div id="bg-blob-2" class="blob-2"></div>
         
-        <!-- Area Konten Utama -->
-        <main id="app-content" class="relative z-10 w-full flex-1 overflow-y-auto overflow-x-hidden pb-24"></main>
+        <!-- Padding bawah diperluas menjadi pb-36 agar area scroll sangat lega -->
+        <main id="app-content" class="relative z-10 w-full flex-1 overflow-y-auto overflow-x-hidden pb-36"></main>
 
-        <!-- Navigasi Bawah -->
-        <nav id="bottom-nav" class="fallback-hidden glass-nav absolute bottom-0 w-full rounded-t-[32px] px-6 py-4 flex justify-between items-center z-50 transition-transform duration-500 translate-y-full">
-            <button onclick="navigate('dashboard')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-blue" data-target="dashboard"><i class="ph-fill ph-squares-four text-2xl"></i></button>
-            <button onclick="navigate('vault')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-blue" data-target="vault"><i class="ph-fill ph-lock-key text-2xl"></i></button>
-            <button onclick="navigate('add')" class="nav-btn flex flex-col items-center gap-1 -mt-8" data-target="add">
+        <!-- Menu Navigasi Bawah dengan pb-safe agar tidak tertimpa garis Home HP -->
+        <nav id="bottom-nav" class="fallback-hidden glass-nav absolute bottom-0 w-full rounded-t-[32px] px-6 pt-4 pb-safe flex justify-between items-center z-50 transition-transform duration-500 translate-y-[150%]">
+            <button onclick="navigate('dashboard')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-blue transition-colors" data-target="dashboard"><i class="ph-fill ph-squares-four text-2xl"></i></button>
+            <button onclick="navigate('vault')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-blue transition-colors" data-target="vault"><i class="ph-fill ph-lock-key text-2xl"></i></button>
+            <button onclick="navigate('add')" class="nav-btn flex flex-col items-center gap-1 -mt-8 transition-transform hover:scale-105 active:scale-95" data-target="add">
                 <div class="w-14 h-14 rounded-full gradient-bg flex items-center justify-center text-white shadow-lg shadow-blue-500/30 border-4 border-white"><i class="ph-bold ph-plus text-2xl"></i></div>
             </button>
-            <button onclick="navigate('profile')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-blue" data-target="profile"><i class="ph-fill ph-user text-2xl"></i></button>
+            <button onclick="navigate('profile')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-blue transition-colors" data-target="profile"><i class="ph-fill ph-user text-2xl"></i></button>
         </nav>
         
         <div id="toast-container" class="absolute top-4 left-1/2 -translate-x-1/2 z-[100] w-[90%] pointer-events-none"></div>
         
-        <!-- Custom Delete Modal -->
+        <!-- Modal Hapus -->
         <div id="delete-modal" class="fallback-hidden fixed inset-0 z-[200] flex items-center justify-center p-4" style="display: none;">
             <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="window.closeModal()"></div>
             <div class="bg-white rounded-3xl p-6 relative z-10 w-[85%] max-w-sm shadow-2xl transform transition-transform scale-95 opacity-0 duration-200" id="delete-modal-box">
@@ -204,13 +214,13 @@
             const blob1 = document.getElementById('bg-blob-1');
             if(route === 'login') {
                 blob1.style.height = '60%'; blob1.style.borderRadius = '0 0 50% 50%'; 
-                bottomNav.classList.add('translate-y-full');
+                bottomNav.classList.add('translate-y-[150%]');
                 bottomNav.classList.add('fallback-hidden');
             } else {
                 blob1.style.height = '35%'; blob1.style.borderRadius = '0 0 30% 30%'; 
                 bottomNav.classList.remove('fallback-hidden');
                 bottomNav.style.display = 'flex';
-                bottomNav.classList.remove('translate-y-full');
+                bottomNav.classList.remove('translate-y-[150%]');
                 document.querySelectorAll('.nav-btn').forEach(btn => {
                     if(btn.dataset.target === route && !['add', 'edit'].includes(route)) {
                         btn.classList.add('text-brand-blue'); btn.classList.remove('text-slate-400');
@@ -273,19 +283,17 @@
             const pin = document.getElementById('login-pin').value.trim();
             if(!pin) { showToast('Harap masukkan PIN', 'error'); return; }
             
-            // CEK KEAMANAN PROTOKOL BROWSER
             if (window.location.protocol === 'file:' || window.location.protocol === 'content:') {
-                showToast("Akses Ditolak! Firebase tidak bisa jalan di File Lokal. Wajib di-upload ke Web/Netlify.", 'error');
+                showToast("Akses Ditolak! Wajib upload ke GitHub/Vercel.", 'error');
                 return;
             }
 
             document.getElementById('btn-login').innerHTML = `<i class="ph-bold ph-spinner animate-spin text-xl"></i>`;
             
             try {
-                if(!auth) throw new Error("Firebase SDK gagal dimuat. Cek koneksi internet.");
-                await signInAnonymously(auth); // Melakukan Anonymous Login
+                if(!auth) throw new Error("Koneksi Firebase gagal.");
+                await signInAnonymously(auth); 
                 
-                // Hardcoded PIN
                 if(pin === '123456') { currentUser = { id: ID_PEMILIK }; navigate('dashboard'); }
                 else { throw new Error("PIN Salah"); }
             } catch(e) { 
@@ -308,7 +316,7 @@
                         </div>
                     </div>
                     
-                    <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center gap-5 mb-6">
+                    <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center gap-5 mb-6 hover:shadow-md transition-shadow">
                         <div id="region-chart" class="donut-chart w-20 h-20 shadow-inner" style="background: conic-gradient(#2563EB 0%, #2563EB 50%, #34D399 50%, #34D399 100%);">
                             <div class="donut-inner shadow-sm"><span class="text-[10px] text-slate-400">Total</span><span id="chart-total" class="text-lg font-bold text-slate-800 leading-none">0</span></div>
                         </div>
@@ -318,8 +326,8 @@
                         </div>
                     </div>
                     
-                    <div class="bg-slate-800 rounded-3xl p-5 shadow-lg shadow-slate-900/20 flex items-center gap-4 relative overflow-hidden">
-                        <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-red-400 relative z-10"><i class="ph-bold ph-warning text-2xl"></i></div>
+                    <div class="bg-slate-800 rounded-3xl p-5 shadow-lg shadow-slate-900/20 flex items-center gap-4 relative overflow-hidden group">
+                        <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-red-400 relative z-10 group-hover:scale-110 transition-transform"><i class="ph-bold ph-warning text-2xl"></i></div>
                         <div class="relative z-10">
                             <p class="text-xs text-slate-300 font-medium">Akun Bermasalah / Banned</p>
                             <h4 class="text-xl font-bold text-white" id="dash-banned">0 Akun</h4>
@@ -348,8 +356,8 @@
         }
 
         window.handleSearch = function() {
-            const term = document.getElementById('search-vault').value.toLowerCase();
-            const sort = document.getElementById('sort-vault').value;
+            const term = document.getElementById('search-vault')?.value.toLowerCase() || '';
+            const sort = document.getElementById('sort-vault')?.value || 'newest';
             loadVaultData(term, sort, true); 
         }
 
@@ -365,9 +373,9 @@
                         <div class="flex gap-2 mb-4">
                             <div class="relative flex-1">
                                 <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                <input type="text" id="search-vault" onkeyup="window.handleSearch()" placeholder="Cari akun/niche..." class="w-full bg-slate-50/50 rounded-xl pl-9 pr-3 py-2.5 text-xs border border-slate-200 outline-none focus:border-brand-blue shadow-inner">
+                                <input type="text" id="search-vault" onkeyup="window.handleSearch()" placeholder="Cari akun/niche..." class="w-full bg-slate-50/50 rounded-xl pl-9 pr-3 py-2.5 text-xs border border-slate-200 outline-none focus:border-brand-blue shadow-inner transition-colors">
                             </div>
-                            <select id="sort-vault" onchange="window.handleSearch()" class="bg-slate-50/50 rounded-xl px-2 py-2.5 text-xs border border-slate-200 outline-none focus:border-brand-blue shadow-inner text-slate-600">
+                            <select id="sort-vault" onchange="window.handleSearch()" class="bg-slate-50/50 rounded-xl px-2 py-2.5 text-xs border border-slate-200 outline-none focus:border-brand-blue shadow-inner text-slate-600 transition-colors">
                                 <option value="newest">Terbaru</option>
                                 <option value="oldest">Terlama</option>
                                 <option value="az">A-Z</option>
@@ -378,12 +386,13 @@
                             <h3 class="font-bold text-slate-800 text-sm">Data Tersimpan</h3>
                             <span class="text-[10px] font-semibold text-brand-blue bg-blue-50 px-2 py-1 rounded-md" id="vault-count">Memuat...</span>
                         </div>
-                        <div id="vault-list" class="flex-1 overflow-y-auto space-y-3 pb-24 pr-1">
+                        <div id="vault-list" class="flex-1 overflow-y-auto space-y-3 pb-8 pr-1">
                             <div class="flex justify-center items-center h-32"><i class="ph-bold ph-spinner animate-spin text-3xl text-brand-blue"></i></div>
                         </div>
                     </div>
 
-                    <div id="bulk-action-bar" class="bulk-bar absolute bottom-24 left-6 right-6 bg-slate-900/95 backdrop-blur-md rounded-2xl p-3 flex justify-between items-center shadow-2xl border border-slate-700 z-[60] translate-y-[150%]">
+                    <!-- Posisi dinaikkan ke bottom-[115px] agar dijamin tidak numpuk dengan navigasi bawah -->
+                    <div id="bulk-action-bar" class="bulk-bar absolute bottom-[115px] left-6 right-6 bg-slate-900/95 backdrop-blur-md rounded-2xl p-3 flex justify-between items-center shadow-2xl border border-slate-700 z-[60] translate-y-[200%]">
                         <span class="text-white text-xs font-medium pl-2"><span id="bulk-count">0</span> Terpilih</span>
                         <div class="flex gap-2">
                             <button onclick="window.bulkMarkChecked()" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-3 py-2 rounded-xl transition-colors"><i class="ph-bold ph-check-circle mr-1"></i>Dicek</button>
@@ -413,9 +422,9 @@
             const bar = document.getElementById('bulk-action-bar');
             if(selectedAccounts.size > 0) {
                 document.getElementById('bulk-count').innerText = selectedAccounts.size;
-                bar.classList.remove('translate-y-[150%]');
+                bar.classList.remove('translate-y-[200%]');
             } else {
-                bar.classList.add('translate-y-[150%]');
+                bar.classList.add('translate-y-[200%]');
             }
         }
 
@@ -479,7 +488,7 @@
                 let regionIcon = item.region === 'US' ? '🇺🇸' : '🇮🇩';
 
                 html += `
-                    <div class="${isSelected ? 'bg-blue-50/50 border-brand-blue' : 'bg-slate-50 border-slate-100'} border rounded-2xl p-4 flex gap-3 transition-all relative overflow-hidden group">
+                    <div class="${isSelected ? 'bg-blue-50/50 border-brand-blue shadow-sm' : 'bg-slate-50 border-slate-100 hover:border-slate-200'} border rounded-2xl p-4 flex gap-3 transition-all relative overflow-hidden group">
                         <div class="absolute left-0 top-0 bottom-0 w-1 ${statusColor}"></div>
                         <div onclick="window.toggleCheckbox('${item.id}')" class="absolute left-2 top-4 w-5 h-5 rounded-md border-2 ${isSelected ? 'bg-brand-blue border-brand-blue' : 'border-slate-300 bg-white group-hover:border-brand-blue'} flex items-center justify-center cursor-pointer transition-colors z-10">
                             ${isSelected ? '<i class="ph-bold ph-check text-white text-xs"></i>' : ''}
@@ -494,25 +503,25 @@
                             <h4 class="font-bold text-slate-800 text-sm truncate flex items-center gap-1.5">${item.platform} ${badges}</h4>
                             <div class="flex items-center gap-1 mt-0.5">
                                 <p class="text-[11px] text-slate-500 truncate">${item.username}</p>
-                                <button onclick="window.copyToClip('${item.username}', 'Username')" class="text-slate-400 hover:text-brand-blue ml-1"><i class="ph-bold ph-copy text-[10px]"></i></button>
+                                <button onclick="window.copyToClip('${item.username}', 'Username')" class="text-slate-400 hover:text-brand-blue ml-1 transition-colors"><i class="ph-bold ph-copy text-[10px]"></i></button>
                             </div>
                             ${item.notes ? `<p class="text-[9px] text-slate-400 truncate italic mt-1"><i class="ph-bold ph-info"></i> ${item.notes}</p>` : ''}
                             
-                            <div class="flex items-center gap-2 mt-2 bg-white px-2 py-1 rounded-lg border border-slate-100 w-max relative z-10">
+                            <div class="flex items-center gap-2 mt-2 bg-white px-2 py-1 rounded-lg border border-slate-100 w-max relative z-10 hover:border-slate-200 transition-colors">
                                 <input type="password" id="${pwdId}" value="${item.password}" class="bg-transparent border-none text-[11px] text-slate-700 font-mono w-16 outline-none pointer-events-none" readonly>
-                                <button onclick="window.togglePass('${pwdId}')" class="text-slate-400 hover:text-brand-blue"><i class="ph-bold ph-eye text-xs"></i></button>
-                                <button onclick="window.copyToClip('${item.password}', 'Password')" class="text-slate-400 hover:text-brand-teal"><i class="ph-bold ph-copy text-xs"></i></button>
+                                <button onclick="window.togglePass('${pwdId}')" class="text-slate-400 hover:text-brand-blue transition-colors"><i class="ph-bold ph-eye text-xs"></i></button>
+                                <button onclick="window.copyToClip('${item.password}', 'Password')" class="text-slate-400 hover:text-brand-teal transition-colors"><i class="ph-bold ph-copy text-xs"></i></button>
                             </div>
                             
                             <div class="mt-2 flex items-center justify-between">
                                 <span class="text-[8px] ${isInactive ? 'text-red-500 font-bold' : 'text-slate-400'}"><i class="ph-bold ph-clock"></i> Dicek: ${lastCheckedStr}</span>
-                                <button onclick="window.markChecked('${item.id}')" class="text-[9px] font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full hover:bg-blue-100 relative z-10">Tandai Dicek</button>
+                                <button onclick="window.markChecked('${item.id}')" class="text-[9px] font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full hover:bg-blue-100 transition-colors relative z-10">Tandai Dicek</button>
                             </div>
                         </div>
                         
                         <div class="flex flex-col gap-1.5 ml-1 pl-2 relative z-10">
-                            <button onclick="window.openEdit('${item.id}')" class="w-7 h-7 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center hover:bg-blue-100"><i class="ph-bold ph-pencil-simple text-xs"></i></button>
-                            <button onclick="window.delVault('${item.id}')" class="w-7 h-7 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100"><i class="ph-bold ph-trash text-xs"></i></button>
+                            <button onclick="window.openEdit('${item.id}')" class="w-7 h-7 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center hover:bg-blue-100 transition-colors"><i class="ph-bold ph-pencil-simple text-xs"></i></button>
+                            <button onclick="window.delVault('${item.id}')" class="w-7 h-7 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition-colors"><i class="ph-bold ph-trash text-xs"></i></button>
                         </div>
                     </div>
                 `;
@@ -579,9 +588,9 @@
             const bar = document.getElementById('pw-strength-bar');
             if (!val) { bar.style.width = '0%'; return; }
             let s = 0; if(val.length >= 8) s++; if(/[A-Z]/.test(val)) s++; if(/[0-9]/.test(val)) s++; if(/[^A-Za-z0-9]/.test(val)) s++;
-            if (s < 2) { bar.style.width = '33%'; bar.className = 'h-full bg-red-500'; }
-            else if (s < 4) { bar.style.width = '66%'; bar.className = 'h-full bg-yellow-400'; }
-            else { bar.style.width = '100%'; bar.className = 'h-full bg-emerald-500'; }
+            if (s < 2) { bar.style.width = '33%'; bar.className = 'h-full bg-red-500 transition-all'; }
+            else if (s < 4) { bar.style.width = '66%'; bar.className = 'h-full bg-yellow-400 transition-all'; }
+            else { bar.style.width = '100%'; bar.className = 'h-full bg-emerald-500 transition-all'; }
         }
 
         function renderAddEditView() {
@@ -603,7 +612,7 @@
             return `
                 <div class="page-enter px-6 pt-12 pb-6">
                     <div class="flex items-center gap-4 mb-6">
-                        <button onclick="navigate('vault')" class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full border border-white/40 flex items-center justify-center text-white"><i class="ph-bold ph-caret-left text-xl"></i></button>
+                        <button onclick="navigate('vault')" class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full border border-white/40 flex items-center justify-center text-white hover:bg-white/30 transition-colors"><i class="ph-bold ph-caret-left text-xl"></i></button>
                         <h2 class="text-2xl font-bold text-white">${isEdit ? 'Ubah Data Capcut' : 'Tambah Akun Capcut'}</h2>
                     </div>
                     
@@ -611,20 +620,20 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="text-xs font-semibold text-slate-500 ml-2 mb-1 block">Nama Profil / Keterangan</label>
-                                <input type="text" id="add-platform" placeholder="Mis: Capcut Creator 1" class="w-full bg-white rounded-full px-5 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm">
+                                <input type="text" id="add-platform" placeholder="Mis: Capcut Creator 1" class="w-full bg-white rounded-full px-5 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm transition-colors">
                             </div>
                             
                             <div class="grid grid-cols-2 gap-3 bg-blue-50 p-3 rounded-2xl border border-blue-100">
                                 <div>
                                     <label class="text-xs font-semibold text-brand-blue ml-2 mb-1 block">Region Capcut</label>
-                                    <select id="add-region" class="w-full bg-white rounded-full px-4 py-3 text-sm text-slate-700 outline-none border border-blue-200 focus:border-brand-blue shadow-sm appearance-none">
+                                    <select id="add-region" class="w-full bg-white rounded-full px-4 py-3 text-sm text-slate-700 outline-none border border-blue-200 focus:border-brand-blue shadow-sm appearance-none transition-colors">
                                         <option value="US">🇺🇸 US</option>
                                         <option value="Indo">🇮🇩 Indo</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="text-xs font-semibold text-brand-blue ml-2 mb-1 block">Tipe Akun</label>
-                                    <select id="add-type" class="w-full bg-white rounded-full px-4 py-3 text-sm text-slate-700 outline-none border border-blue-200 focus:border-brand-blue shadow-sm appearance-none">
+                                    <select id="add-type" class="w-full bg-white rounded-full px-4 py-3 text-sm text-slate-700 outline-none border border-blue-200 focus:border-brand-blue shadow-sm appearance-none transition-colors">
                                         <option value="Akun Baru">Baru</option>
                                         <option value="Akun Budy">Budy</option>
                                         <option value="Akun Partner">Partner Baru</option>
@@ -635,12 +644,12 @@
 
                             <div>
                                 <label class="text-xs font-semibold text-brand-teal ml-2 mb-1 block">Kategori Konten (Niche)</label>
-                                <input type="text" id="add-niche" placeholder="Misal: Gaming, Quotes, Vlog..." class="w-full bg-white rounded-full px-5 py-3 text-sm text-slate-700 outline-none border border-emerald-200 focus:border-brand-teal shadow-sm">
+                                <input type="text" id="add-niche" placeholder="Misal: Gaming, Quotes, Vlog..." class="w-full bg-white rounded-full px-5 py-3 text-sm text-slate-700 outline-none border border-emerald-200 focus:border-brand-teal shadow-sm transition-colors">
                             </div>
 
                             <div>
                                 <label class="text-xs font-semibold text-slate-500 ml-2 mb-1 block">Status Akun</label>
-                                <select id="add-status" class="w-full bg-white rounded-full px-5 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm appearance-none">
+                                <select id="add-status" class="w-full bg-white rounded-full px-5 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm appearance-none transition-colors">
                                     <option value="Aman">🟢 Aman (Aktif)</option>
                                     <option value="Peringatan">🟡 Peringatan (Shadowban)</option>
                                     <option value="Banned">🔴 Banned (Terblokir)</option>
@@ -649,27 +658,27 @@
 
                             <div>
                                 <label class="text-xs font-semibold text-slate-500 ml-2 mb-1 block">Username / Email</label>
-                                <input type="text" id="add-username" placeholder="Username login" class="w-full bg-white rounded-full px-5 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm">
+                                <input type="text" id="add-username" placeholder="Username login" class="w-full bg-white rounded-full px-5 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm transition-colors">
                             </div>
 
                             <div>
                                 <div class="flex justify-between items-end mb-1 ml-2">
                                     <label class="text-xs font-semibold text-slate-500">Password</label>
-                                    <button onclick="window.genPass()" class="text-[10px] text-brand-blue font-bold flex items-center gap-1"><i class="ph-bold ph-magic-wand"></i> Buat Acak</button>
+                                    <button onclick="window.genPass()" class="text-[10px] text-brand-blue font-bold flex items-center gap-1 hover:text-blue-700 transition-colors"><i class="ph-bold ph-magic-wand"></i> Buat Acak</button>
                                 </div>
                                 <div class="relative">
-                                    <input type="password" id="add-password" onkeyup="window.evalPass()" placeholder="Password" class="w-full bg-white rounded-full pl-5 pr-12 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm">
-                                    <button onclick="window.togglePass('add-password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"><i class="ph-bold ph-eye"></i></button>
+                                    <input type="password" id="add-password" onkeyup="window.evalPass()" placeholder="Password" class="w-full bg-white rounded-full pl-5 pr-12 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm transition-colors">
+                                    <button onclick="window.togglePass('add-password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-blue transition-colors"><i class="ph-bold ph-eye"></i></button>
                                 </div>
                                 <div class="mt-2 px-2 h-1 bg-slate-200 rounded-full overflow-hidden w-24"><div id="pw-strength-bar" class="h-full w-0 bg-red-500 transition-all duration-300"></div></div>
                             </div>
 
                             <div>
                                 <label class="text-xs font-semibold text-slate-500 ml-2 mb-1 block">Catatan Rahasia</label>
-                                <textarea id="add-notes" rows="2" placeholder="Detail tambahan..." class="w-full bg-white rounded-2xl px-5 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm resize-none"></textarea>
+                                <textarea id="add-notes" rows="2" placeholder="Detail tambahan..." class="w-full bg-white rounded-2xl px-5 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm resize-none transition-colors"></textarea>
                             </div>
                             
-                            <button onclick="window.handleSave()" id="btn-save" class="w-full bg-brand-blue text-white rounded-full py-3.5 font-semibold shadow-lg shadow-brand-blue/30 hover:bg-blue-700 mt-2">
+                            <button onclick="window.handleSave()" id="btn-save" class="w-full bg-brand-blue text-white rounded-full py-3.5 font-semibold shadow-lg shadow-brand-blue/30 hover:bg-blue-700 mt-2 transition-all active:scale-[0.98]">
                                 ${isEdit ? 'Simpan Perubahan' : 'Simpan Data'}
                             </button>
                         </div>
@@ -700,7 +709,6 @@
             else { showToast('Gagal', 'error'); document.getElementById('btn-save').innerText = 'Coba Lagi'; }
         }
 
-        // --- PERBAIKAN SISTEM BACKUP MENGGUNAKAN METODE BLOB ---
         window.exportData = async function(format) {
             try {
                 const data = await fetchVaultData();
@@ -721,7 +729,6 @@
                     filename = `warzt_backup_${Date.now()}.csv`;
                 }
 
-                // Menggunakan teknik Blob agar kompatibel di semua HP dan WebView
                 const blob = new Blob([content], { type: mime });
                 const url = URL.createObjectURL(blob);
                 
@@ -754,14 +761,14 @@
                 try {
                     const importedData = JSON.parse(e.target.result);
                     if(Array.isArray(importedData)) {
-                        document.getElementById('import-file').value = ''; // Reset input
+                        document.getElementById('import-file').value = ''; 
                         showToast('Sedang memulihkan data... Mohon tunggu');
                         
                         let count = 0;
                         for(const item of importedData) { await addVaultItem(item); count++; }
                         
                         showToast(`${count} akun berhasil dipulihkan!`);
-                        if (currentRoute === 'vault') loadVaultData(); // Refresh daftar otomatis
+                        if (currentRoute === 'vault') loadVaultData(); 
                     } else {
                         showToast('Format JSON salah atau korup', 'error');
                     }
@@ -782,15 +789,15 @@
                         <div class="space-y-3 relative z-10 mt-6 text-left">
                             <h4 class="text-xs font-bold text-slate-500 mb-2">Pencadangan Data</h4>
                             <div class="flex gap-2">
-                                <button onclick="window.exportData('json')" class="flex-1 bg-white text-slate-700 rounded-xl py-3 font-semibold shadow-sm border border-slate-200 hover:bg-slate-50 text-xs flex justify-center items-center gap-1"><i class="ph-bold ph-download-simple text-sm"></i> JSON</button>
-                                <button onclick="window.exportData('csv')" class="flex-1 bg-white text-slate-700 rounded-xl py-3 font-semibold shadow-sm border border-slate-200 hover:bg-slate-50 text-xs flex justify-center items-center gap-1"><i class="ph-bold ph-file-csv text-sm"></i> CSV (Excel)</button>
+                                <button onclick="window.exportData('json')" class="flex-1 bg-white text-slate-700 rounded-xl py-3 font-semibold shadow-sm border border-slate-200 hover:bg-slate-50 text-xs flex justify-center items-center gap-1 transition-colors"><i class="ph-bold ph-download-simple text-sm"></i> JSON</button>
+                                <button onclick="window.exportData('csv')" class="flex-1 bg-white text-slate-700 rounded-xl py-3 font-semibold shadow-sm border border-slate-200 hover:bg-slate-50 text-xs flex justify-center items-center gap-1 transition-colors"><i class="ph-bold ph-file-csv text-sm"></i> CSV (Excel)</button>
                             </div>
                             
                             <input type="file" id="import-file" accept=".json" class="hidden" onchange="window.handleImport(event)">
-                            <button onclick="window.triggerImport()" class="w-full bg-blue-50 text-blue-600 rounded-xl py-3 font-semibold shadow-sm border border-blue-100 hover:bg-blue-100 text-xs flex justify-center items-center gap-1 mt-2"><i class="ph-bold ph-upload-simple text-sm"></i> Pulihkan dari JSON (Import)</button>
+                            <button onclick="window.triggerImport()" class="w-full bg-blue-50 text-blue-600 rounded-xl py-3 font-semibold shadow-sm border border-blue-100 hover:bg-blue-100 text-xs flex justify-center items-center gap-1 mt-2 transition-colors"><i class="ph-bold ph-upload-simple text-sm"></i> Pulihkan dari JSON (Import)</button>
 
                             <h4 class="text-xs font-bold text-slate-500 mb-2 mt-6">Keamanan</h4>
-                            <button onclick="window.handleLogout()" class="w-full bg-red-50 text-red-600 rounded-xl py-3 font-semibold shadow-sm border border-red-100 hover:bg-red-100 text-xs flex justify-center items-center gap-1"><i class="ph-bold ph-lock-key text-sm"></i> Kunci Brankas (Logout)</button>
+                            <button onclick="window.handleLogout()" class="w-full bg-red-50 text-red-600 rounded-xl py-3 font-semibold shadow-sm border border-red-100 hover:bg-red-100 text-xs flex justify-center items-center gap-1 transition-colors"><i class="ph-bold ph-lock-key text-sm"></i> Kunci Brankas (Logout)</button>
                         </div>
                     </div>
                 </div>
@@ -801,4 +808,4 @@
         window.onload = () => { render(); }
     </script>
 </body>
-</html>
+    </html>
