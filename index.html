@@ -19,7 +19,13 @@
                 extend: {
                     fontFamily: { poppins: ['Poppins', 'sans-serif'] },
                     colors: {
-                        brand: { blue: '#2563EB', teal: '#34D399', dark: '#1E293B', light: '#F8FAFC' }
+                        brand: { 
+                            primary: '#881337',   // Rose 900
+                            secondary: '#be123c', // Rose 700
+                            dark: '#4c0519',      // Rose 950
+                            light: '#fff1f2',     // Rose 50
+                            bg: '#fdfafb'         // Very light pink/white
+                        }
                     }
                 }
             }
@@ -30,23 +36,23 @@
     <style>
         /* Perbaikan Tinggi Layar Mobile (100dvh) */
         html, body { height: 100%; height: 100dvh; }
-        body { -webkit-tap-highlight-color: transparent; background-color: #e2e8f0; margin: 0; font-family: 'Poppins', sans-serif; }
+        body { -webkit-tap-highlight-color: transparent; background-color: #fdfafb; margin: 0; font-family: 'Poppins', sans-serif; }
         
         .fallback-hidden { display: none !important; }
         
-        /* Area Aman (Safe Area) untuk iPhone / Android Gesture Bar */
-        .pb-safe { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+        /* Area Aman (Safe Area) untuk iPhone / Android Gesture Bar - Dibuat lebih ringkas */
+        .pb-safe { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
         
         /* Efek Kaca Premium */
-        .glass-card { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 10px 30px rgba(37, 99, 235, 0.08); }
-        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.05); }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 1); box-shadow: 0 15px 35px rgba(136, 19, 55, 0.05); }
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 -10px 40px rgba(76, 5, 25, 0.04); }
         
-        /* Ornamen Latar Belakang */
-        .gradient-bg { background: linear-gradient(135deg, #2563EB 0%, #34D399 100%); }
-        .blob-1 { position: absolute; top: -10%; left: -20%; width: 140%; height: 50%; background: linear-gradient(135deg, #2563EB 0%, #34D399 100%); border-radius: 0 0 50% 50%; z-index: 0; }
-        .blob-2 { position: absolute; bottom: -20%; right: -20%; width: 80%; height: 40%; background: radial-gradient(circle, rgba(52,211,153,0.4) 0%, rgba(37,99,235,0) 70%); z-index: 0; }
+        /* Ornamen Latar Belakang Burgundy */
+        .gradient-bg { background: linear-gradient(135deg, #4c0519 0%, #be123c 100%); }
+        .blob-1 { position: absolute; top: 0; left: 0; width: 100%; height: 40%; background: linear-gradient(135deg, #4c0519 0%, #881337 100%); border-radius: 0 0 35% 35%; z-index: 0; }
+        .blob-2 { position: absolute; bottom: -10%; right: -20%; width: 80%; height: 50%; background: radial-gradient(circle, rgba(190,18,60,0.08) 0%, rgba(136,19,55,0) 70%); z-index: 0; }
         
-        /* Animasi Transisi Halus 60fps */
+        /* Animasi Transisi */
         .page-enter { animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         
@@ -54,44 +60,62 @@
         .donut-chart { border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
         .donut-inner { width: 75%; height: 75%; background-color: #ffffff; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .bulk-bar { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        
+        /* GHOST MODE BLUR */
+        .ghost-active .sensitive-data { filter: blur(5px); user-select: none; transition: filter 0.3s ease; }
+        .ghost-active .sensitive-data:hover { filter: blur(0px); } /* Mengintip saat ditahan/hover */
     </style>
 </head>
-<body class="text-slate-800 flex justify-center h-[100dvh] overflow-hidden">
-
-    <div class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; background-color: #ef4444; color: white; padding: 12px; text-align: center; z-index: 9999; font-size: 12px;">
-        <b>⚠️ Tampilan Diblokir VSCode!</b><br>Buka file HTML ini di Browser Chrome atau unggah ke web hosting.
-    </div>
+<body class="text-slate-800 flex justify-center h-[100dvh] overflow-hidden" id="main-body">
 
     <!-- Kontainer Utama dengan Tinggi 100dvh Penuh -->
-    <div id="app-container" class="w-full max-w-md h-[100dvh] relative bg-slate-50 overflow-hidden shadow-2xl flex flex-col">
+    <div id="app-container" class="w-full max-w-md h-[100dvh] relative bg-brand-bg overflow-hidden shadow-2xl flex flex-col">
         <div id="bg-blob-1" class="blob-1 transition-all duration-700 ease-in-out"></div>
         <div id="bg-blob-2" class="blob-2"></div>
         
-        <!-- Padding bawah diperluas menjadi pb-36 agar area scroll sangat lega -->
-        <main id="app-content" class="relative z-10 w-full flex-1 overflow-y-auto overflow-x-hidden pb-36"></main>
+        <!-- Jarak Bawah Disesuaikan agar tidak terpotong (pb-28) -->
+        <main id="app-content" class="relative z-10 w-full flex-1 overflow-y-auto overflow-x-hidden pb-28"></main>
 
-        <!-- Menu Navigasi Bawah dengan pb-safe agar tidak tertimpa garis Home HP -->
-        <nav id="bottom-nav" class="fallback-hidden glass-nav absolute bottom-0 w-full rounded-t-[32px] px-6 pt-4 pb-safe flex justify-between items-center z-50 transition-transform duration-500 translate-y-[150%]">
-            <button onclick="navigate('dashboard')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-blue transition-colors" data-target="dashboard"><i class="ph-fill ph-squares-four text-2xl"></i></button>
-            <button onclick="navigate('vault')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-blue transition-colors" data-target="vault"><i class="ph-fill ph-lock-key text-2xl"></i></button>
-            <button onclick="navigate('add')" class="nav-btn flex flex-col items-center gap-1 -mt-8 transition-transform hover:scale-105 active:scale-95" data-target="add">
-                <div class="w-14 h-14 rounded-full gradient-bg flex items-center justify-center text-white shadow-lg shadow-blue-500/30 border-4 border-white"><i class="ph-bold ph-plus text-2xl"></i></div>
+        <!-- Menu Navigasi Bawah - Dibuat Lebih Ringkas -->
+        <nav id="bottom-nav" class="fallback-hidden glass-nav absolute bottom-0 w-full rounded-t-3xl px-6 pt-3 pb-safe flex justify-between items-center z-50 transition-transform duration-500 translate-y-[150%]">
+            <button onclick="navigate('dashboard')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-primary transition-colors" data-target="dashboard"><i class="ph-fill ph-squares-four text-xl"></i></button>
+            <button onclick="navigate('vault')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-primary transition-colors" data-target="vault"><i class="ph-fill ph-shield-check text-xl"></i></button>
+            <button onclick="navigate('add')" class="nav-btn flex flex-col items-center gap-1 -mt-6 transition-transform hover:scale-105 active:scale-95" data-target="add">
+                <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center text-white shadow-lg shadow-brand-primary/30 border-[3px] border-white"><i class="ph-bold ph-plus text-xl"></i></div>
             </button>
-            <button onclick="navigate('profile')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-blue transition-colors" data-target="profile"><i class="ph-fill ph-user text-2xl"></i></button>
+            <button onclick="navigate('profile')" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-brand-primary transition-colors" data-target="profile"><i class="ph-fill ph-user text-xl"></i></button>
         </nav>
         
         <div id="toast-container" class="absolute top-4 left-1/2 -translate-x-1/2 z-[100] w-[90%] pointer-events-none"></div>
         
+        <!-- Modal Ubah PIN -->
+        <div id="pin-modal" class="fallback-hidden fixed inset-0 z-[200] flex items-center justify-center p-4" style="display: none;">
+            <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="window.closePinModal()"></div>
+            <div class="bg-white rounded-3xl p-5 relative z-10 w-[85%] max-w-sm shadow-2xl transform transition-transform scale-95 opacity-0 duration-200" id="pin-modal-box">
+                <div class="w-12 h-12 bg-brand-light border border-brand-secondary/20 rounded-full flex items-center justify-center text-brand-primary mx-auto mb-3"><i class="ph-bold ph-lock-key text-2xl"></i></div>
+                <h3 class="text-base font-bold text-center text-slate-800 mb-1">Ubah Master PIN</h3>
+                <p class="text-[11px] text-center text-slate-500 mb-4">PIN ini disimpan di HP Anda.</p>
+                <div class="space-y-3 mb-5">
+                    <input type="password" id="old-pin" placeholder="PIN Lama" class="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm text-center font-bold tracking-widest outline-none border border-slate-200 focus:border-brand-primary">
+                    <input type="password" id="new-pin" placeholder="PIN Baru (Min. 4 Angka)" class="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm text-center font-bold tracking-widest outline-none border border-slate-200 focus:border-brand-primary">
+                </div>
+                <div class="flex gap-2.5">
+                    <button onclick="window.closePinModal()" class="flex-1 bg-slate-100 text-slate-600 font-semibold py-2.5 rounded-xl hover:bg-slate-200 transition-colors text-xs">Batal</button>
+                    <button onclick="window.saveNewPin()" class="flex-1 bg-brand-primary text-white font-semibold py-2.5 rounded-xl hover:bg-brand-secondary transition-colors shadow-lg shadow-brand-primary/30 text-xs">Simpan</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal Hapus -->
         <div id="delete-modal" class="fallback-hidden fixed inset-0 z-[200] flex items-center justify-center p-4" style="display: none;">
             <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="window.closeModal()"></div>
-            <div class="bg-white rounded-3xl p-6 relative z-10 w-[85%] max-w-sm shadow-2xl transform transition-transform scale-95 opacity-0 duration-200" id="delete-modal-box">
-                <div class="w-14 h-14 bg-red-50 border border-red-100 rounded-full flex items-center justify-center text-red-500 mx-auto mb-4"><i class="ph-bold ph-trash text-3xl"></i></div>
-                <h3 class="text-lg font-bold text-center text-slate-800 mb-2">Hapus Akun?</h3>
-                <p class="text-xs text-center text-slate-500 mb-6">Data yang dihapus tidak dapat dikembalikan. Anda yakin?</p>
-                <div class="flex gap-3">
-                    <button onclick="window.closeModal()" class="flex-1 bg-slate-100 text-slate-600 font-semibold py-3 rounded-2xl hover:bg-slate-200 transition-colors text-sm">Batal</button>
-                    <button onclick="window.confirmDelete()" class="flex-1 bg-red-500 text-white font-semibold py-3 rounded-2xl hover:bg-red-600 transition-colors shadow-lg shadow-red-500/30 text-sm">Ya, Hapus</button>
+            <div class="bg-white rounded-3xl p-5 relative z-10 w-[85%] max-w-sm shadow-2xl transform transition-transform scale-95 opacity-0 duration-200" id="delete-modal-box">
+                <div class="w-12 h-12 bg-red-50 border border-red-100 rounded-full flex items-center justify-center text-red-500 mx-auto mb-3"><i class="ph-bold ph-trash text-2xl"></i></div>
+                <h3 class="text-base font-bold text-center text-slate-800 mb-1">Hapus Akun?</h3>
+                <p class="text-[11px] text-center text-slate-500 mb-5">Data yang dihapus tidak dapat dikembalikan. Anda yakin?</p>
+                <div class="flex gap-2.5">
+                    <button onclick="window.closeModal()" class="flex-1 bg-slate-100 text-slate-600 font-semibold py-2.5 rounded-xl hover:bg-slate-200 transition-colors text-xs">Batal</button>
+                    <button onclick="window.confirmDelete()" class="flex-1 bg-red-500 text-white font-semibold py-2.5 rounded-xl hover:bg-red-600 transition-colors shadow-lg shadow-red-500/30 text-xs">Ya, Hapus</button>
                 </div>
             </div>
         </div>
@@ -135,6 +159,7 @@
         let currentRoute = 'login';
         let currentEditItem = null;
         let selectedAccounts = new Set();
+        let isGhostMode = false; // Fitur Penyamaran
         
         let idleTime = 0;
         function resetIdleTimer() { idleTime = 0; }
@@ -149,18 +174,22 @@
             }
         }, 1000);
 
+        // Ambil PIN Kustom dari Memori HP (Default 123456)
+        const getMasterPin = () => localStorage.getItem('warzt_master_pin') || '123456';
+
         // ==========================================
         // 3. CORE LOGIC
         // ==========================================
         const appContent = document.getElementById('app-content');
         const bottomNav = document.getElementById('bottom-nav');
+        const mainBody = document.getElementById('main-body');
         
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             const bgColor = type === 'success' ? 'bg-emerald-500' : 'bg-red-500';
-            toast.className = `${bgColor} text-white px-4 py-3 rounded-2xl shadow-lg flex items-center gap-3 transform transition-all duration-300 translate-y-[-100%] opacity-0 mb-2`;
-            toast.innerHTML = `<i class="ph-bold ${type === 'success' ? 'ph-check-circle' : 'ph-warning-circle'} text-xl"></i><span class="text-sm font-medium">${message}</span>`;
+            toast.className = `${bgColor} text-white px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2.5 transform transition-all duration-300 translate-y-[-100%] opacity-0 mb-2`;
+            toast.innerHTML = `<i class="ph-bold ${type === 'success' ? 'ph-check-circle' : 'ph-warning-circle'} text-lg"></i><span class="text-[13px] font-medium">${message}</span>`;
             container.appendChild(toast);
             
             setTimeout(() => { toast.classList.remove('translate-y-[-100%]', 'opacity-0'); }, 10);
@@ -210,22 +239,36 @@
             currentRoute = route; render();
         }
 
+        window.toggleGhostMode = function() {
+            isGhostMode = !isGhostMode;
+            if(isGhostMode) {
+                mainBody.classList.add('ghost-active');
+                showToast('Mode Penyamaran Aktif');
+            } else {
+                mainBody.classList.remove('ghost-active');
+                showToast('Mode Penyamaran Nonaktif');
+            }
+            render(); // Segarkan tampilan ikon
+        }
+
         function adjustBackground(route) {
             const blob1 = document.getElementById('bg-blob-1');
             if(route === 'login') {
-                blob1.style.height = '60%'; blob1.style.borderRadius = '0 0 50% 50%'; 
+                blob1.style.height = '100%'; blob1.style.borderRadius = '0'; 
+                blob1.style.background = 'linear-gradient(135deg, #fdfafb 0%, #fff1f2 100%)';
                 bottomNav.classList.add('translate-y-[150%]');
                 bottomNav.classList.add('fallback-hidden');
             } else {
-                blob1.style.height = '35%'; blob1.style.borderRadius = '0 0 30% 30%'; 
+                blob1.style.height = '35%'; blob1.style.borderRadius = '0 0 35% 35%'; 
+                blob1.style.background = 'linear-gradient(135deg, #4c0519 0%, #881337 100%)';
                 bottomNav.classList.remove('fallback-hidden');
                 bottomNav.style.display = 'flex';
                 bottomNav.classList.remove('translate-y-[150%]');
                 document.querySelectorAll('.nav-btn').forEach(btn => {
                     if(btn.dataset.target === route && !['add', 'edit'].includes(route)) {
-                        btn.classList.add('text-brand-blue'); btn.classList.remove('text-slate-400');
+                        btn.classList.add('text-brand-primary'); btn.classList.remove('text-slate-400');
                     } else if (!['add', 'edit'].includes(route)) {
-                        btn.classList.remove('text-brand-blue'); btn.classList.add('text-slate-400');
+                        btn.classList.remove('text-brand-primary'); btn.classList.add('text-slate-400');
                     }
                 });
             }
@@ -248,22 +291,24 @@
         // --- VIEWS ---
         function renderLoginView() {
             return `
-                <div class="page-enter flex flex-col items-center justify-center min-h-screen px-6 py-12 z-10 relative">
-                    <div class="mb-10 text-center">
-                        <div class="w-20 h-20 bg-white rounded-[2rem] flex items-center justify-center shadow-2xl mx-auto mb-4 border-2 border-white/40"><i class="ph-bold ph-shield-check text-4xl text-brand-blue"></i></div>
-                        <h1 class="text-3xl font-bold text-white tracking-tight">warzt Data</h1>
-                        <p class="text-white/80 text-sm mt-1">Personal Secure Vault</p>
+                <div class="page-enter flex flex-col items-center justify-center min-h-screen px-6 py-10 z-10 relative">
+                    <div class="mb-8 text-center relative">
+                        <!-- Icon diperkecil sedikit -->
+                        <div class="w-20 h-20 bg-gradient-to-br from-brand-primary to-brand-dark rounded-2xl flex items-center justify-center shadow-xl shadow-brand-primary/40 mx-auto mb-5 border border-white/20 transform rotate-3">
+                            <i class="ph-fill ph-shield-check text-4xl text-white transform -rotate-3"></i>
+                        </div>
+                        <h1 class="text-3xl font-bold text-slate-800 tracking-tight mb-1.5">warzt<span class="text-brand-primary">Data</span></h1>
+                        <p class="text-slate-500 text-xs font-medium">Personal Secure Vault</p>
                     </div>
-                    <div class="glass-card w-full rounded-3xl p-6 sm:p-8 mt-4">
-                        <h2 class="text-2xl font-bold text-slate-800 mb-1">Akses Privat</h2>
-                        <p class="text-sm text-slate-500 mb-6">Masukkan PIN Master Anda</p>
+                    <!-- Form Login diperkecil -->
+                    <div class="glass-card w-full max-w-sm rounded-[1.5rem] p-5 sm:p-6 mt-2 shadow-xl border border-white/60">
                         <div class="space-y-4">
                             <div class="relative">
                                 <i class="ph-bold ph-lock-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                <input type="password" id="login-pin" placeholder="PIN Rahasia" class="w-full bg-white rounded-full pl-12 pr-12 py-3.5 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-all shadow-sm">
-                                <button onclick="window.togglePass('login-pin')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-blue"><i class="ph-bold ph-eye"></i></button>
+                                <input type="password" id="login-pin" placeholder="Master PIN" class="w-full bg-slate-50/50 rounded-xl pl-10 pr-10 py-3 text-sm text-slate-800 font-medium outline-none border border-slate-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10 transition-all shadow-sm">
+                                <button onclick="window.togglePass('login-pin')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-primary"><i class="ph-bold ph-eye"></i></button>
                             </div>
-                            <button onclick="window.handleLogin()" id="btn-login" class="w-full bg-brand-blue text-white rounded-full py-3.5 font-semibold shadow-lg shadow-brand-blue/30 hover:bg-blue-700 active:scale-[0.98] transition-all mt-4 flex justify-center items-center gap-2">
+                            <button onclick="window.handleLogin()" id="btn-login" class="w-full bg-gradient-to-r from-brand-dark to-brand-primary text-white rounded-xl py-3.5 text-sm font-semibold shadow-lg shadow-brand-primary/30 hover:shadow-xl active:scale-[0.98] transition-all flex justify-center items-center gap-2">
                                 <span>Buka Brankas</span><i class="ph-bold ph-arrow-right"></i>
                             </button>
                         </div>
@@ -288,13 +333,13 @@
                 return;
             }
 
-            document.getElementById('btn-login').innerHTML = `<i class="ph-bold ph-spinner animate-spin text-xl"></i>`;
+            document.getElementById('btn-login').innerHTML = `<i class="ph-bold ph-spinner animate-spin text-lg"></i>`;
             
             try {
                 if(!auth) throw new Error("Koneksi Firebase gagal.");
                 await signInAnonymously(auth); 
                 
-                if(pin === '123456') { currentUser = { id: ID_PEMILIK }; navigate('dashboard'); }
+                if(pin === getMasterPin()) { currentUser = { id: ID_PEMILIK }; navigate('dashboard'); }
                 else { throw new Error("PIN Salah"); }
             } catch(e) { 
                 console.error(e);
@@ -304,34 +349,50 @@
         }
 
         function renderDashboardView() {
+            const ghostIcon = isGhostMode ? 'ph-ghost ph-fill text-brand-primary' : 'ph-eye ph-fill text-slate-400';
             return `
-                <div class="page-enter px-6 pt-12 pb-6">
+                <div class="page-enter px-5 pt-10 pb-6">
                     <div class="flex justify-between items-center mb-6">
                         <div>
-                            <p class="text-white/80 text-sm">Status Brankas</p>
-                            <h2 class="text-2xl font-bold text-white">Dashboard</h2>
+                            <p class="text-white/80 text-[11px] font-medium">Good morning,</p>
+                            <h2 class="text-xl font-bold text-white flex items-center gap-1.5">Owner <span class="text-lg">👋</span></h2>
                         </div>
-                        <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full border border-white/40 flex items-center justify-center text-white">
-                            <i class="ph-bold ph-chart-pie-slice text-2xl"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex items-center gap-5 mb-6 hover:shadow-md transition-shadow">
-                        <div id="region-chart" class="donut-chart w-20 h-20 shadow-inner" style="background: conic-gradient(#2563EB 0%, #2563EB 50%, #34D399 50%, #34D399 100%);">
-                            <div class="donut-inner shadow-sm"><span class="text-[10px] text-slate-400">Total</span><span id="chart-total" class="text-lg font-bold text-slate-800 leading-none">0</span></div>
-                        </div>
-                        <div class="flex-1 space-y-2">
-                            <div class="flex justify-between items-center"><div class="flex items-center gap-1.5"><span class="text-lg">🇺🇸</span><span class="text-xs text-slate-600 font-medium">Akun US</span></div><span class="text-sm font-bold text-slate-800" id="dash-us">-</span></div>
-                            <div class="flex justify-between items-center"><div class="flex items-center gap-1.5"><span class="text-lg">🇮🇩</span><span class="text-xs text-slate-600 font-medium">Akun Indo</span></div><span class="text-sm font-bold text-slate-800" id="dash-id">-</span></div>
+                        <!-- Tombol Atas Diperkecil -->
+                        <div class="flex gap-2">
+                            <button onclick="window.toggleGhostMode()" class="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center hover:bg-white/20 shadow-lg transition-colors" title="Mode Penyamaran">
+                                <i class="${ghostIcon} text-lg ${isGhostMode ? 'text-white' : 'text-white'}"></i>
+                            </button>
+                            <div class="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center text-white shadow-lg">
+                                <i class="ph-fill ph-bell text-lg"></i>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="bg-slate-800 rounded-3xl p-5 shadow-lg shadow-slate-900/20 flex items-center gap-4 relative overflow-hidden group">
-                        <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-red-400 relative z-10 group-hover:scale-110 transition-transform"><i class="ph-bold ph-warning text-2xl"></i></div>
-                        <div class="relative z-10">
-                            <p class="text-xs text-slate-300 font-medium">Akun Bermasalah / Banned</p>
-                            <h4 class="text-xl font-bold text-white" id="dash-banned">0 Akun</h4>
+                    <!-- Kotak Data Diperkecil -->
+                    <div class="bg-gradient-to-br from-brand-dark to-brand-primary rounded-[1.5rem] p-5 shadow-xl shadow-brand-dark/20 border border-white/10 flex items-center gap-5 mb-5 hover:shadow-2xl transition-all">
+                        <div id="region-chart" class="donut-chart w-20 h-20 shadow-inner" style="background: conic-gradient(#fff 0%, #fff 50%, #f43f5e 50%, #f43f5e 100%);">
+                            <div class="donut-inner shadow-sm bg-brand-primary"><span class="text-[9px] text-white/70">Total</span><span id="chart-total" class="text-lg font-bold text-white leading-none mt-0.5">0</span></div>
                         </div>
+                        <div class="flex-1 space-y-2.5">
+                            <div class="flex justify-between items-center bg-white/10 px-3 py-1.5 rounded-lg border border-white/5">
+                                <div class="flex items-center gap-1.5"><span class="text-xs">🇺🇸</span><span class="text-[11px] text-white/90 font-medium">Akun US</span></div>
+                                <span class="text-xs font-bold text-white" id="dash-us">-</span>
+                            </div>
+                            <div class="flex justify-between items-center bg-white/10 px-3 py-1.5 rounded-lg border border-white/5">
+                                <div class="flex items-center gap-1.5"><span class="text-xs">🇮🇩</span><span class="text-[11px] text-white/90 font-medium">Akun Indo</span></div>
+                                <span class="text-xs font-bold text-white" id="dash-id">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-[1.5rem] p-4 shadow-lg shadow-brand-dark/5 border border-brand-light flex items-center gap-3 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 w-24 h-24 bg-red-50 rounded-full blur-2xl -z-0"></div>
+                        <div class="w-10 h-10 bg-red-100/50 rounded-xl flex items-center justify-center text-red-500 relative z-10 group-hover:scale-110 transition-transform"><i class="ph-fill ph-warning-octagon text-xl"></i></div>
+                        <div class="relative z-10 flex-1">
+                            <p class="text-[10px] text-slate-500 font-medium mb-0.5">Security Alerts</p>
+                            <h4 class="text-sm font-bold text-slate-800" id="dash-banned">0 Bermasalah</h4>
+                        </div>
+                        <i class="ph-bold ph-caret-right text-slate-300 relative z-10 text-sm"></i>
                     </div>
                 </div>
             `;
@@ -343,7 +404,7 @@
             data.forEach(item => {
                 if(item.region === 'US') cUs++;
                 if(item.region === 'Indo') cId++;
-                if(item.status === 'Banned') cBanned++;
+                if(item.status === 'Banned' || item.status === 'Peringatan') cBanned++;
             });
             const total = cUs + cId;
             document.getElementById('dash-us').innerText = cUs;
@@ -352,7 +413,7 @@
             document.getElementById('chart-total').innerText = total;
             
             const usPercentage = total === 0 ? 50 : (cUs / total) * 100;
-            document.getElementById('region-chart').style.background = `conic-gradient(#2563EB 0%, #2563EB ${usPercentage}%, #34D399 ${usPercentage}%, #34D399 100%)`;
+            document.getElementById('region-chart').style.background = `conic-gradient(#ffffff 0%, #ffffff ${usPercentage}%, #fda4af ${usPercentage}%, #fda4af 100%)`;
         }
 
         window.handleSearch = function() {
@@ -362,41 +423,46 @@
         }
 
         function renderVaultView() {
+            const ghostIcon = isGhostMode ? 'ph-ghost ph-fill text-brand-primary' : 'ph-eye ph-fill text-brand-primary';
             return `
-                <div class="page-enter px-6 pt-12 pb-6 flex flex-col h-full relative">
-                    <div class="mb-6 flex justify-between items-center">
-                        <h2 class="text-2xl font-bold text-white">Brankas Akun</h2>
-                        <button onclick="window.toggleSelectAll()" class="text-xs text-white/80 bg-white/20 px-3 py-1.5 rounded-full hover:bg-white/30 backdrop-blur-md transition-colors"><i class="ph-bold ph-check-square-offset mr-1"></i>Pilih Semua</button>
+                <div class="page-enter px-5 pt-10 pb-4 flex flex-col h-full relative">
+                    <div class="mb-5 flex justify-between items-center">
+                        <h2 class="text-xl font-bold text-white">All Items</h2>
+                        <div class="flex gap-2">
+                            <button onclick="window.toggleGhostMode()" class="w-7 h-7 bg-white/20 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center hover:bg-white/30 transition-colors" title="Toggle Mode Penyamaran">
+                                <i class="${ghostIcon} text-white text-sm"></i>
+                            </button>
+                            <button onclick="window.toggleSelectAll()" class="text-[10px] font-medium text-brand-primary bg-white px-3 py-1.5 rounded-full hover:bg-brand-light shadow-sm transition-colors"><i class="ph-bold ph-check-square-offset mr-1"></i>Select All</button>
+                        </div>
                     </div>
                     
-                    <div class="glass-card flex-1 rounded-3xl p-4 sm:p-5 flex flex-col min-h-[450px]">
+                    <div class="glass-card flex-1 rounded-[1.5rem] p-3.5 flex flex-col min-h-[450px]">
                         <div class="flex gap-2 mb-4">
                             <div class="relative flex-1">
-                                <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                <input type="text" id="search-vault" onkeyup="window.handleSearch()" placeholder="Cari akun/niche..." class="w-full bg-slate-50/50 rounded-xl pl-9 pr-3 py-2.5 text-xs border border-slate-200 outline-none focus:border-brand-blue shadow-inner transition-colors">
+                                <i class="ph-bold ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-primary/60 text-sm"></i>
+                                <input type="text" id="search-vault" onkeyup="window.handleSearch()" placeholder="Search passwords..." class="w-full bg-brand-dark text-white rounded-full pl-9 pr-3 py-2.5 text-[11px] border-none outline-none focus:ring-2 focus:ring-brand-primary/50 placeholder:text-white/50 transition-colors shadow-inner">
                             </div>
-                            <select id="sort-vault" onchange="window.handleSearch()" class="bg-slate-50/50 rounded-xl px-2 py-2.5 text-xs border border-slate-200 outline-none focus:border-brand-blue shadow-inner text-slate-600 transition-colors">
+                            <select id="sort-vault" onchange="window.handleSearch()" class="bg-brand-light rounded-full px-2.5 py-2 text-[10px] font-semibold text-brand-primary border-none outline-none shadow-sm transition-colors cursor-pointer">
                                 <option value="newest">Terbaru</option>
                                 <option value="oldest">Terlama</option>
                                 <option value="az">A-Z</option>
                                 <option value="inactive">Perlu Dicek</option>
                             </select>
                         </div>
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-bold text-slate-800 text-sm">Data Tersimpan</h3>
-                            <span class="text-[10px] font-semibold text-brand-blue bg-blue-50 px-2 py-1 rounded-md" id="vault-count">Memuat...</span>
+                        <div class="flex justify-between items-center mb-3 px-1">
+                            <h3 class="font-bold text-slate-800 text-xs">Recent Items</h3>
+                            <span class="text-[9px] font-bold text-brand-primary bg-brand-light px-2 py-0.5 rounded-full" id="vault-count">Memuat...</span>
                         </div>
-                        <div id="vault-list" class="flex-1 overflow-y-auto space-y-3 pb-8 pr-1">
-                            <div class="flex justify-center items-center h-32"><i class="ph-bold ph-spinner animate-spin text-3xl text-brand-blue"></i></div>
+                        <div id="vault-list" class="flex-1 overflow-y-auto space-y-2.5 pb-6 pr-1">
+                            <div class="flex justify-center items-center h-32"><i class="ph-bold ph-spinner animate-spin text-2xl text-brand-primary"></i></div>
                         </div>
                     </div>
 
-                    <!-- Posisi dinaikkan ke bottom-[115px] agar dijamin tidak numpuk dengan navigasi bawah -->
-                    <div id="bulk-action-bar" class="bulk-bar absolute bottom-[115px] left-6 right-6 bg-slate-900/95 backdrop-blur-md rounded-2xl p-3 flex justify-between items-center shadow-2xl border border-slate-700 z-[60] translate-y-[200%]">
-                        <span class="text-white text-xs font-medium pl-2"><span id="bulk-count">0</span> Terpilih</span>
-                        <div class="flex gap-2">
-                            <button onclick="window.bulkMarkChecked()" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-3 py-2 rounded-xl transition-colors"><i class="ph-bold ph-check-circle mr-1"></i>Dicek</button>
-                            <button onclick="window.bulkDelete()" class="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold px-3 py-2 rounded-xl transition-colors"><i class="ph-bold ph-trash mr-1"></i>Hapus</button>
+                    <div id="bulk-action-bar" class="bulk-bar absolute bottom-[105px] left-6 right-6 bg-brand-dark/95 backdrop-blur-md rounded-full px-3 py-2 flex justify-between items-center shadow-xl shadow-brand-dark/40 border border-white/10 z-[60] translate-y-[200%]">
+                        <span class="text-white text-[11px] font-semibold ml-2"><span id="bulk-count">0</span> Terpilih</span>
+                        <div class="flex gap-1.5">
+                            <button onclick="window.bulkMarkChecked()" class="bg-brand-primary hover:bg-brand-secondary text-white text-[9px] font-bold px-3 py-1.5 rounded-full transition-colors flex items-center"><i class="ph-bold ph-check-circle mr-1 text-[10px]"></i>Dicek</button>
+                            <button onclick="window.bulkDelete()" class="bg-red-500/20 hover:bg-red-500 text-red-100 hover:text-white border border-red-500/30 text-[9px] font-bold px-3 py-1.5 rounded-full transition-colors flex items-center"><i class="ph-bold ph-trash mr-1 text-[10px]"></i>Hapus</button>
                         </div>
                     </div>
                 </div>
@@ -467,7 +533,7 @@
             document.getElementById('vault-count').innerText = `${data.length} Item`;
             
             if (data.length === 0) {
-                listEl.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-center opacity-60 pt-10"><i class="ph-fill ph-empty text-5xl text-slate-300 mb-3"></i><p class="text-sm font-medium text-slate-500">Belum ada data.</p></div>`;
+                listEl.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-center opacity-60 pt-10"><i class="ph-fill ph-empty text-4xl text-slate-300 mb-2"></i><p class="text-xs font-medium text-slate-500">Belum ada data.</p></div>`;
                 return;
             }
             
@@ -477,8 +543,9 @@
                 const isSelected = selectedAccounts.has(item.id);
                 const isInactive = !item.lastChecked || (Date.now() - item.lastChecked > msIn30Days);
                 
-                let badges = `<span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[8px] font-bold">${item.accountType || 'Baru'}</span>`;
-                if(item.niche) badges += `<span class="bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded text-[8px] font-bold"><i class="ph-bold ph-tag"></i> ${item.niche}</span>`;
+                let badges = `<span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[7px] font-bold">${item.accountType || 'Baru'}</span>`;
+                if(item.niche) badges += `<span class="bg-brand-light text-brand-primary px-1.5 py-0.5 rounded text-[7px] font-bold"><i class="ph-bold ph-tag"></i> ${item.niche}</span>`;
+                if(item.ipProxy) badges += `<span class="bg-blue-50 text-blue-500 px-1.5 py-0.5 rounded text-[7px] font-bold"><i class="ph-bold ph-globe"></i> IP Proxy</span>`;
                 
                 let statusColor = 'bg-emerald-400';
                 if(item.status === 'Peringatan') statusColor = 'bg-yellow-400';
@@ -488,40 +555,41 @@
                 let regionIcon = item.region === 'US' ? '🇺🇸' : '🇮🇩';
 
                 html += `
-                    <div class="${isSelected ? 'bg-blue-50/50 border-brand-blue shadow-sm' : 'bg-slate-50 border-slate-100 hover:border-slate-200'} border rounded-2xl p-4 flex gap-3 transition-all relative overflow-hidden group">
-                        <div class="absolute left-0 top-0 bottom-0 w-1 ${statusColor}"></div>
-                        <div onclick="window.toggleCheckbox('${item.id}')" class="absolute left-2 top-4 w-5 h-5 rounded-md border-2 ${isSelected ? 'bg-brand-blue border-brand-blue' : 'border-slate-300 bg-white group-hover:border-brand-blue'} flex items-center justify-center cursor-pointer transition-colors z-10">
-                            ${isSelected ? '<i class="ph-bold ph-check text-white text-xs"></i>' : ''}
+                    <div class="${isSelected ? 'bg-brand-light border-brand-secondary/30 shadow-md' : 'bg-white border-slate-100 hover:border-slate-200 shadow-sm'} border rounded-[1rem] p-3 flex gap-3 transition-all relative overflow-hidden group">
+                        <div class="absolute left-0 top-0 bottom-0 w-[3px] ${statusColor}"></div>
+                        <div onclick="window.toggleCheckbox('${item.id}')" class="absolute left-1.5 top-3.5 w-4 h-4 rounded-[4px] border-2 ${isSelected ? 'bg-brand-primary border-brand-primary' : 'border-slate-300 bg-white group-hover:border-brand-primary'} flex items-center justify-center cursor-pointer transition-colors z-10">
+                            ${isSelected ? '<i class="ph-bold ph-check text-white text-[9px]"></i>' : ''}
                         </div>
                         
-                        <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center flex-shrink-0 text-2xl border border-slate-100 ml-5 relative">
+                        <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center flex-shrink-0 text-xl border border-slate-100 ml-4 relative">
                             ${regionIcon}
-                            ${isInactive ? '<div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white animate-pulse" title="Tidak aktif >30 Hari"></div>' : ''}
+                            ${isInactive ? '<div class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white animate-pulse" title="Tidak aktif >30 Hari"></div>' : ''}
                         </div>
                         
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-slate-800 text-sm truncate flex items-center gap-1.5">${item.platform} ${badges}</h4>
+                        <div class="flex-1 min-w-0 py-0.5">
+                            <h4 class="font-bold text-slate-800 text-[13px] truncate flex items-center gap-1">${item.platform} ${badges}</h4>
                             <div class="flex items-center gap-1 mt-0.5">
-                                <p class="text-[11px] text-slate-500 truncate">${item.username}</p>
-                                <button onclick="window.copyToClip('${item.username}', 'Username')" class="text-slate-400 hover:text-brand-blue ml-1 transition-colors"><i class="ph-bold ph-copy text-[10px]"></i></button>
-                            </div>
-                            ${item.notes ? `<p class="text-[9px] text-slate-400 truncate italic mt-1"><i class="ph-bold ph-info"></i> ${item.notes}</p>` : ''}
-                            
-                            <div class="flex items-center gap-2 mt-2 bg-white px-2 py-1 rounded-lg border border-slate-100 w-max relative z-10 hover:border-slate-200 transition-colors">
-                                <input type="password" id="${pwdId}" value="${item.password}" class="bg-transparent border-none text-[11px] text-slate-700 font-mono w-16 outline-none pointer-events-none" readonly>
-                                <button onclick="window.togglePass('${pwdId}')" class="text-slate-400 hover:text-brand-blue transition-colors"><i class="ph-bold ph-eye text-xs"></i></button>
-                                <button onclick="window.copyToClip('${item.password}', 'Password')" class="text-slate-400 hover:text-brand-teal transition-colors"><i class="ph-bold ph-copy text-xs"></i></button>
+                                <p class="text-[11px] text-slate-500 truncate font-medium sensitive-data">${item.username}</p>
+                                <button onclick="window.copyToClip('${item.username}', 'Username')" class="text-slate-400 hover:text-brand-primary ml-0.5 transition-colors"><i class="ph-bold ph-copy text-[10px]"></i></button>
                             </div>
                             
-                            <div class="mt-2 flex items-center justify-between">
-                                <span class="text-[8px] ${isInactive ? 'text-red-500 font-bold' : 'text-slate-400'}"><i class="ph-bold ph-clock"></i> Dicek: ${lastCheckedStr}</span>
-                                <button onclick="window.markChecked('${item.id}')" class="text-[9px] font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full hover:bg-blue-100 transition-colors relative z-10">Tandai Dicek</button>
+                            ${item.notes ? `<p class="text-[9px] text-slate-400 truncate mt-1 bg-slate-50 px-2 py-0.5 rounded inline-block sensitive-data"><i class="ph-bold ph-info"></i> ${item.notes}</p>` : ''}
+                            
+                            <div class="flex items-center gap-1.5 mt-2 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100 w-max relative z-10 hover:border-brand-light hover:bg-brand-bg transition-colors">
+                                <input type="password" id="${pwdId}" value="${item.password}" class="bg-transparent border-none text-[10px] text-slate-700 font-mono w-14 outline-none pointer-events-none sensitive-data" readonly>
+                                <button onclick="window.togglePass('${pwdId}')" class="text-slate-400 hover:text-brand-primary transition-colors"><i class="ph-bold ph-eye text-[11px]"></i></button>
+                                <button onclick="window.copyToClip('${item.password}', 'Password')" class="text-slate-400 hover:text-brand-primary transition-colors ml-0.5"><i class="ph-bold ph-copy text-[11px]"></i></button>
+                            </div>
+                            
+                            <div class="mt-2.5 flex items-center justify-between">
+                                <span class="text-[8px] font-medium ${isInactive ? 'text-red-500 font-bold' : 'text-slate-400'}"><i class="ph-bold ph-clock"></i> Checked: ${lastCheckedStr}</span>
+                                <button onclick="window.markChecked('${item.id}')" class="text-[8px] font-bold text-brand-primary bg-brand-light px-2.5 py-0.5 rounded-full hover:bg-brand-primary hover:text-white transition-colors relative z-10 shadow-sm">Mark Safe</button>
                             </div>
                         </div>
                         
-                        <div class="flex flex-col gap-1.5 ml-1 pl-2 relative z-10">
-                            <button onclick="window.openEdit('${item.id}')" class="w-7 h-7 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center hover:bg-blue-100 transition-colors"><i class="ph-bold ph-pencil-simple text-xs"></i></button>
-                            <button onclick="window.delVault('${item.id}')" class="w-7 h-7 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition-colors"><i class="ph-bold ph-trash text-xs"></i></button>
+                        <div class="flex flex-col justify-center gap-1.5 ml-1 pl-1.5 relative z-10 border-l border-slate-100">
+                            <button onclick="window.openEdit('${item.id}')" class="w-7 h-7 rounded-full bg-slate-50 text-slate-500 flex items-center justify-center hover:bg-brand-light hover:text-brand-primary transition-colors"><i class="ph-bold ph-pencil-simple text-xs"></i></button>
+                            <button onclick="window.delVault('${item.id}')" class="w-7 h-7 rounded-full bg-slate-50 text-slate-500 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-colors"><i class="ph-bold ph-trash text-xs"></i></button>
                         </div>
                     </div>
                 `;
@@ -605,35 +673,37 @@
                     document.getElementById('add-username').value = currentEditItem.username || '';
                     document.getElementById('add-password').value = currentEditItem.password || '';
                     document.getElementById('add-notes').value = currentEditItem.notes || '';
+                    document.getElementById('add-ip').value = currentEditItem.ipProxy || '';
+                    document.getElementById('add-2fa').value = currentEditItem.twoFactor || '';
                     window.evalPass();
                 }, 50);
             }
 
             return `
-                <div class="page-enter px-6 pt-12 pb-6">
-                    <div class="flex items-center gap-4 mb-6">
-                        <button onclick="navigate('vault')" class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full border border-white/40 flex items-center justify-center text-white hover:bg-white/30 transition-colors"><i class="ph-bold ph-caret-left text-xl"></i></button>
-                        <h2 class="text-2xl font-bold text-white">${isEdit ? 'Ubah Data Capcut' : 'Tambah Akun Capcut'}</h2>
+                <div class="page-enter px-5 pt-10 pb-4">
+                    <div class="flex items-center gap-3 mb-6">
+                        <button onclick="navigate('vault')" class="w-9 h-9 bg-white/10 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors shadow-sm"><i class="ph-bold ph-caret-left text-lg"></i></button>
+                        <h2 class="text-xl font-bold text-white">${isEdit ? 'Update Details' : 'Add New Item'}</h2>
                     </div>
                     
-                    <div class="glass-card w-full rounded-3xl p-6 relative">
-                        <div class="space-y-4">
+                    <div class="glass-card w-full rounded-[1.5rem] p-5 relative shadow-xl border border-white/60">
+                        <div class="space-y-3.5">
                             <div>
-                                <label class="text-xs font-semibold text-slate-500 ml-2 mb-1 block">Nama Profil / Keterangan</label>
-                                <input type="text" id="add-platform" placeholder="Mis: Capcut Creator 1" class="w-full bg-white rounded-full px-5 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm transition-colors">
+                                <label class="text-[11px] font-semibold text-slate-500 ml-1.5 mb-1 block">Account / Platform Name</label>
+                                <input type="text" id="add-platform" placeholder="e.g. Capcut Creator 1" class="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm text-slate-800 font-medium outline-none border border-slate-200 focus:border-brand-primary focus:bg-white shadow-sm transition-colors">
                             </div>
                             
-                            <div class="grid grid-cols-2 gap-3 bg-blue-50 p-3 rounded-2xl border border-blue-100">
+                            <div class="grid grid-cols-2 gap-2.5 bg-brand-light/50 p-2.5 rounded-xl border border-brand-light">
                                 <div>
-                                    <label class="text-xs font-semibold text-brand-blue ml-2 mb-1 block">Region Capcut</label>
-                                    <select id="add-region" class="w-full bg-white rounded-full px-4 py-3 text-sm text-slate-700 outline-none border border-blue-200 focus:border-brand-blue shadow-sm appearance-none transition-colors">
+                                    <label class="text-[11px] font-semibold text-brand-primary ml-1.5 mb-1 block">Region</label>
+                                    <select id="add-region" class="w-full bg-white rounded-lg px-3 py-2 text-xs text-slate-800 font-medium outline-none border border-white focus:border-brand-primary shadow-sm appearance-none transition-colors">
                                         <option value="US">🇺🇸 US</option>
                                         <option value="Indo">🇮🇩 Indo</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="text-xs font-semibold text-brand-blue ml-2 mb-1 block">Tipe Akun</label>
-                                    <select id="add-type" class="w-full bg-white rounded-full px-4 py-3 text-sm text-slate-700 outline-none border border-blue-200 focus:border-brand-blue shadow-sm appearance-none transition-colors">
+                                    <label class="text-[11px] font-semibold text-brand-primary ml-1.5 mb-1 block">Tipe Akun</label>
+                                    <select id="add-type" class="w-full bg-white rounded-lg px-3 py-2 text-xs text-slate-800 font-medium outline-none border border-white focus:border-brand-primary shadow-sm appearance-none transition-colors">
                                         <option value="Akun Baru">Baru</option>
                                         <option value="Akun Budy">Budy</option>
                                         <option value="Akun Partner">Partner Baru</option>
@@ -642,44 +712,57 @@
                                 </div>
                             </div>
 
-                            <div>
-                                <label class="text-xs font-semibold text-brand-teal ml-2 mb-1 block">Kategori Konten (Niche)</label>
-                                <input type="text" id="add-niche" placeholder="Misal: Gaming, Quotes, Vlog..." class="w-full bg-white rounded-full px-5 py-3 text-sm text-slate-700 outline-none border border-emerald-200 focus:border-brand-teal shadow-sm transition-colors">
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <div>
+                                    <label class="text-[11px] font-semibold text-brand-secondary ml-1.5 mb-1 block">Niche / Kategori</label>
+                                    <input type="text" id="add-niche" placeholder="Gaming, dll" class="w-full bg-slate-50 rounded-xl px-3 py-2.5 text-sm text-slate-800 font-medium outline-none border border-slate-200 focus:border-brand-secondary focus:bg-white shadow-sm transition-colors">
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-semibold text-slate-500 ml-1.5 mb-1 block">Status Akun</label>
+                                    <select id="add-status" class="w-full bg-slate-50 rounded-xl px-3 py-2.5 text-sm text-slate-800 font-medium outline-none border border-slate-200 focus:border-brand-primary focus:bg-white shadow-sm appearance-none transition-colors">
+                                        <option value="Aman">🟢 Aman</option>
+                                        <option value="Peringatan">🟡 Peringatan</option>
+                                        <option value="Banned">🔴 Banned</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div>
-                                <label class="text-xs font-semibold text-slate-500 ml-2 mb-1 block">Status Akun</label>
-                                <select id="add-status" class="w-full bg-white rounded-full px-5 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm appearance-none transition-colors">
-                                    <option value="Aman">🟢 Aman (Aktif)</option>
-                                    <option value="Peringatan">🟡 Peringatan (Shadowban)</option>
-                                    <option value="Banned">🔴 Banned (Terblokir)</option>
-                                </select>
+                                <label class="text-[11px] font-semibold text-slate-500 ml-1.5 mb-1 block">Username / Email</label>
+                                <input type="text" id="add-username" placeholder="Username login" class="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm text-slate-800 font-medium outline-none border border-slate-200 focus:border-brand-primary focus:bg-white shadow-sm transition-colors">
                             </div>
 
                             <div>
-                                <label class="text-xs font-semibold text-slate-500 ml-2 mb-1 block">Username / Email</label>
-                                <input type="text" id="add-username" placeholder="Username login" class="w-full bg-white rounded-full px-5 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm transition-colors">
-                            </div>
-
-                            <div>
-                                <div class="flex justify-between items-end mb-1 ml-2">
-                                    <label class="text-xs font-semibold text-slate-500">Password</label>
-                                    <button onclick="window.genPass()" class="text-[10px] text-brand-blue font-bold flex items-center gap-1 hover:text-blue-700 transition-colors"><i class="ph-bold ph-magic-wand"></i> Buat Acak</button>
+                                <div class="flex justify-between items-end mb-1 ml-1.5">
+                                    <label class="text-[11px] font-semibold text-slate-500">Password</label>
+                                    <button onclick="window.genPass()" class="text-[9px] text-brand-primary font-bold flex items-center gap-1 hover:text-brand-dark transition-colors bg-brand-light px-2 py-1 rounded"><i class="ph-bold ph-magic-wand"></i> Buat Acak</button>
                                 </div>
                                 <div class="relative">
-                                    <input type="password" id="add-password" onkeyup="window.evalPass()" placeholder="Password" class="w-full bg-white rounded-full pl-5 pr-12 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm transition-colors">
-                                    <button onclick="window.togglePass('add-password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-blue transition-colors"><i class="ph-bold ph-eye"></i></button>
+                                    <input type="password" id="add-password" onkeyup="window.evalPass()" placeholder="Password" class="w-full bg-slate-50 rounded-xl pl-4 pr-10 py-2.5 text-sm text-slate-800 font-medium outline-none border border-slate-200 focus:border-brand-primary focus:bg-white shadow-sm transition-colors">
+                                    <button onclick="window.togglePass('add-password')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-primary transition-colors"><i class="ph-bold ph-eye text-sm"></i></button>
                                 </div>
-                                <div class="mt-2 px-2 h-1 bg-slate-200 rounded-full overflow-hidden w-24"><div id="pw-strength-bar" class="h-full w-0 bg-red-500 transition-all duration-300"></div></div>
+                                <div class="mt-2 px-1.5 h-1 bg-slate-200 rounded-full overflow-hidden w-20"><div id="pw-strength-bar" class="h-full w-0 bg-red-500 transition-all duration-300"></div></div>
+                            </div>
+                            
+                            <!-- FITUR BARU: IP Proxy & 2FA -->
+                            <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-slate-100">
+                                <div>
+                                    <label class="text-[10px] font-semibold text-blue-500 ml-1.5 mb-0.5 block">🌐 IP Proxy / VPN</label>
+                                    <input type="text" id="add-ip" placeholder="192.168.x.x" class="w-full bg-slate-50 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium outline-none border border-slate-200 focus:border-blue-500 focus:bg-white shadow-sm transition-colors">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-semibold text-emerald-500 ml-1.5 mb-0.5 block">🔐 2FA / Backup</label>
+                                    <input type="text" id="add-2fa" placeholder="Kode Recovery" class="w-full bg-slate-50 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium outline-none border border-slate-200 focus:border-emerald-500 focus:bg-white shadow-sm transition-colors">
+                                </div>
                             </div>
 
                             <div>
-                                <label class="text-xs font-semibold text-slate-500 ml-2 mb-1 block">Catatan Rahasia</label>
-                                <textarea id="add-notes" rows="2" placeholder="Detail tambahan..." class="w-full bg-white rounded-2xl px-5 py-3 text-sm text-slate-700 outline-none border border-slate-200 focus:border-brand-blue shadow-sm resize-none transition-colors"></textarea>
+                                <label class="text-[11px] font-semibold text-slate-500 ml-1.5 mb-1 block">Catatan Rahasia</label>
+                                <textarea id="add-notes" rows="2" placeholder="Detail tambahan..." class="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-xs text-slate-800 outline-none border border-slate-200 focus:border-brand-primary focus:bg-white shadow-sm resize-none transition-colors"></textarea>
                             </div>
                             
-                            <button onclick="window.handleSave()" id="btn-save" class="w-full bg-brand-blue text-white rounded-full py-3.5 font-semibold shadow-lg shadow-brand-blue/30 hover:bg-blue-700 mt-2 transition-all active:scale-[0.98]">
-                                ${isEdit ? 'Simpan Perubahan' : 'Simpan Data'}
+                            <button onclick="window.handleSave()" id="btn-save" class="w-full bg-gradient-to-r from-brand-dark to-brand-primary text-white rounded-xl py-3 text-sm font-bold shadow-lg shadow-brand-primary/30 hover:shadow-xl mt-3 transition-all active:scale-[0.98]">
+                                ${isEdit ? 'Save Changes' : 'Add Item'}
                             </button>
                         </div>
                     </div>
@@ -696,12 +779,14 @@
                 status: document.getElementById('add-status').value,
                 username: document.getElementById('add-username').value.trim(),
                 password: document.getElementById('add-password').value.trim(),
+                ipProxy: document.getElementById('add-ip').value.trim(),
+                twoFactor: document.getElementById('add-2fa').value.trim(),
                 notes: document.getElementById('add-notes').value.trim()
             };
             
-            if(!payload.platform || !payload.username || !payload.password) { showToast('Isi kolom wajib', 'error'); return; }
+            if(!payload.platform || !payload.username || !payload.password) { showToast('Isi nama, username, password', 'error'); return; }
             
-            document.getElementById('btn-save').innerHTML = `<i class="ph-bold ph-spinner animate-spin text-xl"></i>`;
+            document.getElementById('btn-save').innerHTML = `<i class="ph-bold ph-spinner animate-spin text-lg"></i>`;
             const isEdit = currentRoute === 'edit';
             const res = isEdit ? await updateVaultItem(currentEditItem.id, payload) : await addVaultItem(payload);
             
@@ -722,8 +807,8 @@
                     mime = "application/json";
                     filename = `warzt_backup_${Date.now()}.json`;
                 } else if (format === 'csv') {
-                    const headers = ['Platform', 'Region', 'Tipe', 'Niche', 'Status', 'Username', 'Password', 'Catatan'];
-                    const rows = cleanData.map(d => [d.platform, d.region, d.accountType, d.niche || '-', d.status, d.username, d.password, `"${(d.notes || '').replace(/"/g, '""')}"`]);
+                    const headers = ['Platform', 'Region', 'Tipe', 'Niche', 'Status', 'Username', 'Password', 'Proxy', '2FA', 'Catatan'];
+                    const rows = cleanData.map(d => [d.platform, d.region, d.accountType, d.niche || '-', d.status, d.username, d.password, d.ipProxy || '-', d.twoFactor || '-', `"${(d.notes || '').replace(/"/g, '""')}"`]);
                     content = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
                     mime = "text/csv";
                     filename = `warzt_backup_${Date.now()}.csv`;
@@ -770,34 +855,70 @@
                         showToast(`${count} akun berhasil dipulihkan!`);
                         if (currentRoute === 'vault') loadVaultData(); 
                     } else {
-                        showToast('Format JSON salah atau korup', 'error');
+                        showToast('Format JSON salah', 'error');
                     }
                 } catch(err) { showToast('File bukan format JSON yang valid', 'error'); }
             };
             reader.readAsText(file);
         }
 
+        // --- MANAJEMEN PIN ---
+        window.openPinModal = function() {
+            document.getElementById('old-pin').value = '';
+            document.getElementById('new-pin').value = '';
+            const modal = document.getElementById('pin-modal');
+            const box = document.getElementById('pin-modal-box');
+            modal.classList.remove('fallback-hidden');
+            modal.style.display = 'flex';
+            setTimeout(() => { box.classList.remove('scale-95', 'opacity-0'); box.classList.add('scale-100', 'opacity-100'); }, 10);
+        }
+        window.closePinModal = function() {
+            const modal = document.getElementById('pin-modal');
+            const box = document.getElementById('pin-modal-box');
+            box.classList.remove('scale-100', 'opacity-100'); box.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => { modal.style.display = 'none'; modal.classList.add('fallback-hidden'); }, 200);
+        }
+        window.saveNewPin = function() {
+            const oldPin = document.getElementById('old-pin').value;
+            const newPin = document.getElementById('new-pin').value;
+            
+            if (oldPin !== getMasterPin()) {
+                showToast('PIN Lama Salah!', 'error'); return;
+            }
+            if (newPin.length < 4) {
+                showToast('PIN Baru minimal 4 angka!', 'error'); return;
+            }
+            
+            localStorage.setItem('warzt_master_pin', newPin);
+            showToast('PIN Berhasil Diubah!');
+            window.closePinModal();
+        }
+
         function renderProfileView() {
             return `
-                <div class="page-enter px-6 pt-12 pb-6">
-                    <div class="mb-8"><h2 class="text-2xl font-bold text-white">Pengaturan</h2></div>
-                    <div class="glass-card rounded-3xl p-6 text-center relative overflow-hidden">
-                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-100 rounded-full opacity-50"></div>
-                        <div class="w-16 h-16 bg-brand-blue text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg shadow-blue-500/30 border-4 border-white relative z-10"><i class="ph-bold ph-shield-check"></i></div>
-                        <h3 class="text-lg font-bold text-slate-800 relative z-10">Brankas Pribadi</h3>
+                <div class="page-enter px-5 pt-10 pb-4">
+                    <div class="mb-6"><h2 class="text-xl font-bold text-white">Security Overview</h2></div>
+                    <div class="glass-card rounded-[1.5rem] p-5 text-center relative overflow-hidden shadow-xl border border-white/60">
+                        <div class="absolute -right-10 -top-10 w-28 h-28 bg-brand-light rounded-full opacity-60 blur-2xl"></div>
+                        <div class="w-16 h-16 bg-gradient-to-br from-brand-primary to-brand-dark text-white rounded-full flex items-center justify-center text-2xl mx-auto mb-3 shadow-xl shadow-brand-dark/20 border-[3px] border-white relative z-10"><i class="ph-fill ph-shield-check"></i></div>
+                        <h3 class="text-lg font-bold text-slate-800 relative z-10">warzt Data Vault</h3>
+                        <p class="text-[11px] text-slate-500 font-medium">Encrypted & Secured</p>
                         
-                        <div class="space-y-3 relative z-10 mt-6 text-left">
-                            <h4 class="text-xs font-bold text-slate-500 mb-2">Pencadangan Data</h4>
-                            <div class="flex gap-2">
-                                <button onclick="window.exportData('json')" class="flex-1 bg-white text-slate-700 rounded-xl py-3 font-semibold shadow-sm border border-slate-200 hover:bg-slate-50 text-xs flex justify-center items-center gap-1 transition-colors"><i class="ph-bold ph-download-simple text-sm"></i> JSON</button>
-                                <button onclick="window.exportData('csv')" class="flex-1 bg-white text-slate-700 rounded-xl py-3 font-semibold shadow-sm border border-slate-200 hover:bg-slate-50 text-xs flex justify-center items-center gap-1 transition-colors"><i class="ph-bold ph-file-csv text-sm"></i> CSV (Excel)</button>
+                        <div class="space-y-2.5 relative z-10 mt-6 text-left">
+                            
+                            <h4 class="text-[10px] font-bold text-brand-primary uppercase tracking-wider mb-1.5 ml-1">Data Backup</h4>
+                            <div class="flex gap-2.5">
+                                <button onclick="window.exportData('json')" class="flex-1 bg-white text-slate-700 rounded-xl py-3 font-semibold shadow-sm border border-slate-100 hover:border-brand-light hover:bg-brand-bg text-[11px] flex justify-center items-center gap-1.5 transition-all"><i class="ph-bold ph-file-code text-sm text-brand-primary"></i> JSON</button>
+                                <button onclick="window.exportData('csv')" class="flex-1 bg-white text-slate-700 rounded-xl py-3 font-semibold shadow-sm border border-slate-100 hover:border-brand-light hover:bg-brand-bg text-[11px] flex justify-center items-center gap-1.5 transition-all"><i class="ph-bold ph-file-csv text-sm text-brand-primary"></i> CSV</button>
                             </div>
                             
                             <input type="file" id="import-file" accept=".json" class="hidden" onchange="window.handleImport(event)">
-                            <button onclick="window.triggerImport()" class="w-full bg-blue-50 text-blue-600 rounded-xl py-3 font-semibold shadow-sm border border-blue-100 hover:bg-blue-100 text-xs flex justify-center items-center gap-1 mt-2 transition-colors"><i class="ph-bold ph-upload-simple text-sm"></i> Pulihkan dari JSON (Import)</button>
+                            <button onclick="window.triggerImport()" class="w-full bg-brand-light text-brand-primary rounded-xl py-3 font-bold shadow-sm border border-brand-secondary/20 hover:bg-brand-primary hover:text-white text-[11px] flex justify-center items-center gap-1.5 mt-1 transition-all"><i class="ph-bold ph-upload-simple text-sm"></i> Restore Data (Import)</button>
 
-                            <h4 class="text-xs font-bold text-slate-500 mb-2 mt-6">Keamanan</h4>
-                            <button onclick="window.handleLogout()" class="w-full bg-red-50 text-red-600 rounded-xl py-3 font-semibold shadow-sm border border-red-100 hover:bg-red-100 text-xs flex justify-center items-center gap-1 transition-colors"><i class="ph-bold ph-lock-key text-sm"></i> Kunci Brankas (Logout)</button>
+                            <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 mt-6 ml-1">Keamanan (Security)</h4>
+                            <button onclick="window.openPinModal()" class="w-full bg-white text-slate-600 rounded-xl py-3 font-bold shadow-sm border border-slate-100 hover:border-brand-primary hover:text-brand-primary text-[11px] flex justify-center items-center gap-1.5 transition-all"><i class="ph-bold ph-key text-sm"></i> Ubah Master PIN</button>
+
+                            <button onclick="window.handleLogout()" class="w-full bg-slate-50 text-slate-600 rounded-xl py-3 font-bold shadow-sm border border-slate-200 hover:bg-red-50 hover:text-red-500 hover:border-red-200 text-[11px] flex justify-center items-center gap-1.5 mt-1 transition-all"><i class="ph-bold ph-lock-key text-sm"></i> Lock Vault</button>
                         </div>
                     </div>
                 </div>
@@ -808,4 +929,4 @@
         window.onload = () => { render(); }
     </script>
 </body>
-    </html>
+</html>
